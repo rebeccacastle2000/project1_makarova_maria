@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "project1-makarova-maria"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Maria Makarova <rebecca.castle2000@gmail.com>"]
 readme = "README.md"
