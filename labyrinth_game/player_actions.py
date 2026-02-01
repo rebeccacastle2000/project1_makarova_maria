@@ -3,6 +3,11 @@ from labyrinth_game.utils import describe_current_room, random_event
 
 
 def show_inventory(game_state):
+    """Выводит содержимое инвентаря игрока или сообщение об его пустоте.
+    
+    Args:
+        game_state: Словарь с состоянием игры
+    """
     if not game_state["player_inventory"]:
         print("\nВаш инвентарь пуст.")
     else:
@@ -12,6 +17,14 @@ def show_inventory(game_state):
 
 
 def get_input(prompt="> "):
+    """Получает ввод от пользователя с обработкой прерываний.
+    
+    Args:
+        prompt: Приглашение для ввода (по умолчанию "> ")
+    
+    Returns:
+        Строка ввода или "quit" при прерывании
+    """
     try:
         return input(prompt).strip()
     except (KeyboardInterrupt, EOFError):
@@ -20,6 +33,15 @@ def get_input(prompt="> "):
 
 
 def move_player(game_state, direction):
+    """Перемещает игрока в указанном направлении при наличии выхода.
+    
+    Проверяет наличие выхода, обновляет текущую комнату, увеличивает
+    счётчик шагов и вызывает случайное событие после перемещения.
+    
+    Args:
+        game_state: Словарь с состоянием игры
+        direction: Направление перемещения (north/south/east/west)
+    """
     current_room = game_state["current_room"]
     room = ROOMS[current_room]
 
@@ -50,13 +72,30 @@ def move_player(game_state, direction):
 
 
 def take_item(game_state, item_name):
+    """Поднимает предмет из текущей комнаты и добавляет в инвентарь.
+    
+    Блокирует поднятие сундука (treasure_chest) как слишком тяжёлого.
+    
+    Args:
+        game_state: Словарь с состоянием игры
+        item_name: Название предмета для поднятия
+    """
     current_room = game_state["current_room"]
     room = ROOMS[current_room]
-
+    
     if item_name == "treasure_chest":
         print("Вы не можете поднять сундук, он слишком тяжелый.")
         return
-
+    
+    if room["puzzle"] is not None and room["items"]:
+        if item_name in room["items"]:
+            print(f"Предмет '{item_name}' охраняется загадкой.\
+                 Сначала решите загадку (команда 'solve').")
+            return
+        else:
+            print("Такого предмета здесь нет.")
+            return
+    
     if item_name in room["items"]:
         room["items"].remove(item_name)
         game_state["player_inventory"].append(item_name)
@@ -66,6 +105,12 @@ def take_item(game_state, item_name):
 
 
 def use_item(game_state, item_name):
+    """Использует предмет из инвентаря с уникальным эффектом для каждого.
+    
+    Args:
+        game_state: Словарь с состоянием игры
+        item_name: Название предмета для использования
+    """
     if item_name not in game_state["player_inventory"]:
         print("У вас нет такого предмета.")
         return

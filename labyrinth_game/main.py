@@ -27,6 +27,12 @@ game_state = {
 
 
 def process_command(game_state, command_line):
+    """Обрабатывает пользовательскую команду и вызывает соответствующую функцию.
+    
+    Args:
+        game_state: Словарь с состоянием игры
+        command_line: Строка ввода пользователя
+    """
     if not command_line:
         return
 
@@ -82,6 +88,7 @@ def process_command(game_state, command_line):
 
 
 def main():
+    """Точка входа в игру. Инициализирует игровой цикл."""
     print("Добро пожаловать в Лабиринт сокровищ!")
     describe_current_room(game_state)
     show_help()
